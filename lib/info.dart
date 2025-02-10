@@ -54,127 +54,139 @@ class InfoScreenState extends State<InfoScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Container(
-        decoration: BoxDecoration(
-          image: DecorationImage(
-            image: AssetImage('assets/images/Loading Screen.png'),
-            fit: BoxFit.cover,
-          ),
-        ),
-        child: Center(
-          child: SingleChildScrollView(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                // Logo
-                Image.asset(
-                  'assets/images/BooK.png',
-                  width: 400,
-                  height: 300,
-                  fit: BoxFit.contain,
-                ),
-                const SizedBox(height: 0),
-                // Input fields
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 40.0),
-                  child: Column(
-                    children: [
-                      _buildTextField("Name", nameController),
-                      const SizedBox(height: 10),
-                      _buildTextField("Age", ageController),
-                      const SizedBox(height: 10),
-                      _buildTextField("Contact", contactController),
-                      const SizedBox(height: 10),
-                      _buildTextField("City", cityController),
-                      const SizedBox(height: 10),
-                      _buildTextField("Mail", mailController),
-                    ],
-                  ),
-                ),
-                const SizedBox(height: 20),
-                // Done button
-                ElevatedButton(
-                  onPressed: () {
-                    _saveDataAndNavigate();
-                  },
-                  style: ButtonStyle(
-                    padding: WidgetStateProperty.all(
-                      const EdgeInsets.symmetric(
-                        horizontal: 0,
-                        vertical: 0,
-                      ),
-                    ),
-                    shape: WidgetStateProperty.all(
-                      RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(25), // Rounded corners
-                      ),
-                    ),
-                    backgroundColor: WidgetStateProperty.all(Colors.transparent), // Transparent for gradient
-                    elevation: WidgetStateProperty.all(10.0), // Shadow for depth
-                    side: WidgetStateProperty.all(
-                      const BorderSide(
-                        color: Color(0xFF002FA7), // Dark blue border color
-                        width: 2.0, // Border width
-                      ),
-                    ),
-                  ),
-                  child: Container(
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(25), // Same rounded corners
-                      gradient: const LinearGradient(
-                        colors: [
-                          Color(0xFFD9D9D9),
-                          Color(0xFFFF4DC3), // Gradient pink
-                          Color(0xFF002FA7), // Gradient blue
+      body: LayoutBuilder(
+        builder: (context, constraints) {
+          bool isLandscape = constraints.maxWidth > constraints.maxHeight;
 
-                        ],
-                        begin: Alignment.topCenter,
-                        end: Alignment.bottomCenter,
-                      ),
-                    ),
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 40,
-                      vertical: 15,
-                    ),
-                    child: const Text(
-                      "DONE",
-                      style: TextStyle(
-                        fontFamily: 'CherryBombOne-Regular',
-                        fontSize: 20,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.white,
-                      ),
-                    ),
-                  ),
-                ),
+          double logoWidth = isLandscape
+              ? constraints.maxWidth * 0.3
+              : constraints.maxWidth * 0.7;
 
-              ],
+          double logoHeight = isLandscape
+              ? constraints.maxHeight * 0.5
+              : constraints.maxHeight * 0.3;
+
+          double textFieldWidth = isLandscape
+              ? constraints.maxWidth * 0.5
+              : constraints.maxWidth * 0.8;
+
+          double buttonWidth = isLandscape
+              ? constraints.maxWidth * 0.4
+              : constraints.maxWidth * 0.6;
+
+          return Container(
+            decoration: BoxDecoration(
+              image: DecorationImage(
+                image: AssetImage('assets/images/Loading Screen.png'),
+                fit: BoxFit.cover,
+              ),
             ),
-          ),
-        ),
+            child: Center(
+              child: SingleChildScrollView(
+                padding: EdgeInsets.symmetric(
+                  horizontal: constraints.maxWidth * 0.05,
+                ),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    Image.asset(
+                      'assets/images/BooK.png',
+                      width: logoWidth,
+                      height: logoHeight,
+                      fit: BoxFit.contain,
+                    ),
+                    const SizedBox(height: 20),
+
+                    // Input fields with dynamic width
+                    _buildTextField("Name", nameController, textFieldWidth),
+                    const SizedBox(height: 10),
+                    _buildTextField("Age", ageController, textFieldWidth),
+                    const SizedBox(height: 10),
+                    _buildTextField("Contact", contactController, textFieldWidth),
+                    const SizedBox(height: 10),
+                    _buildTextField("City", cityController, textFieldWidth),
+                    const SizedBox(height: 10),
+                    _buildTextField("Mail", mailController, textFieldWidth),
+                    const SizedBox(height: 20),
+
+                    // Done button
+                    ElevatedButton(
+                      onPressed: _saveDataAndNavigate,
+                      style: ElevatedButton.styleFrom(
+                        padding: EdgeInsets.symmetric(
+                          horizontal: buttonWidth * 0.2,
+                          vertical: 15,
+                        ),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(25),
+                        ),
+                        backgroundColor: Colors.transparent,
+                        elevation: 0,
+                      ),
+                      child: Container(
+                        width: buttonWidth,
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(25),
+                          gradient: const LinearGradient(
+                            colors: [
+                              Color(0xFFD9D9D9), // 50% opacity gray
+                              Color(0xFFFF4DC3), // 50% opacity pink
+                              Color(0xFF002FA7), // 50% opacity blue
+                            ],
+                            begin: Alignment.topCenter,
+                            end: Alignment.bottomCenter,
+                          ),
+                        ),
+                        padding: const EdgeInsets.symmetric(
+                          vertical: 14,
+                        ),
+                        alignment: Alignment.center,
+                        child: const Text(
+                          "DONE",
+                          style: TextStyle(
+                            fontFamily: 'CherryBombOne-Regular',
+                            fontSize: 18,
+                            fontWeight: FontWeight.normal,
+                            color: Colors.white,
+                            letterSpacing: 2.0,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          );
+        },
       ),
     );
   }
 
   // Helper method to create text fields
-  Widget _buildTextField(String label, TextEditingController controller) {
-    return TextField(
-      controller: controller,
-      decoration: InputDecoration(
-        labelText: "$label :",
-        labelStyle: const TextStyle(
-          fontFamily: 'CherryBomb',
-          fontSize: 18,
-          fontWeight: FontWeight.bold,
-          color: Colors.black,
-        ),
-        enabledBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(25),
-          borderSide: const BorderSide(color: Colors.grey, width: 2),
-        ),
-        focusedBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(25),
-          borderSide: const BorderSide(color: Colors.blue, width: 2),
+  Widget _buildTextField(String label, TextEditingController controller, double width) {
+    return SizedBox(
+      width: width,
+      child: TextField(
+        controller: controller,
+        decoration: InputDecoration(
+          labelText: "$label :",
+          labelStyle: TextStyle(
+            fontFamily: 'CherryBombOne-Regular',
+            fontSize: width * 0.08, // Dynamic font size
+            fontWeight: FontWeight.bold,
+            color: const Color(0xFF002174),
+            letterSpacing: 3.0,
+          ),
+          enabledBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(25),
+            borderSide: const BorderSide(color: Colors.grey, width: 2),
+          ),
+          focusedBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(25),
+            borderSide: const BorderSide(color: Colors.blue, width: 2),
+          ),
         ),
       ),
     );

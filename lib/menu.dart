@@ -1,11 +1,92 @@
 import 'package:flutter/material.dart';
 import 'package:book/exit.dart';
+import 'package:book/utils/audio_manager.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
-class MenuScreen extends StatelessWidget {
+class MenuScreen extends StatefulWidget {
   const MenuScreen({super.key});
 
   @override
+  _MenuScreenState createState() => _MenuScreenState();
+}
+
+class _MenuScreenState extends State<MenuScreen> with WidgetsBindingObserver {
+  bool isMusicPlaying = true;
+  bool wasMusicPlayingBeforeBackground =
+      true; // Track music state before backgrounding
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addObserver(this); // Observe app lifecycle
+    _resetMusicOnStartup();
+  }
+
+  @override
+  void dispose() {
+    WidgetsBinding.instance
+        .removeObserver(this); // Remove observer when screen is disposed
+    super.dispose();
+  }
+
+  // ✅ Handle app lifecycle changes
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state == AppLifecycleState.paused) {
+      // App is in the background → Stop music if it was playing
+      if (isMusicPlaying) {
+        wasMusicPlayingBeforeBackground =
+            true; // Remember that music was playing
+        AudioManager().stopMusic();
+      } else {
+        wasMusicPlayingBeforeBackground = false;
+      }
+    } else if (state == AppLifecycleState.resumed) {
+      // App comes back to foreground → Resume music if it was playing before
+      if (wasMusicPlayingBeforeBackground) {
+        AudioManager().playBackgroundMusic();
+      }
+    }
+  }
+
+  // ✅ Ensure music always starts playing when reopening the app
+  Future<void> _resetMusicOnStartup() async {
+    setState(() {
+      isMusicPlaying = true; // Always start with music ON
+    });
+
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setBool('isMusicPlaying', true);
+
+    AudioManager().playBackgroundMusic();
+  }
+
+  // ✅ Save music state to SharedPreferences
+  Future<void> _saveMusicState(bool state) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setBool('isMusicPlaying', state);
+  }
+
+  // ✅ Toggle music
+  void _toggleMusic() {
+    setState(() {
+      isMusicPlaying = !isMusicPlaying;
+    });
+
+    _saveMusicState(isMusicPlaying);
+
+    if (isMusicPlaying) {
+      AudioManager().playBackgroundMusic();
+    } else {
+      AudioManager().stopMusic();
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
+    double screenWidth = MediaQuery.of(context).size.width;
+    double screenHeight = MediaQuery.of(context).size.height;
+
     return Scaffold(
       body: Container(
         decoration: BoxDecoration(
@@ -14,162 +95,176 @@ class MenuScreen extends StatelessWidget {
             fit: BoxFit.cover,
           ),
         ),
-        child: Column(
-          children: [
-            // Logo and Title
-            const SizedBox(height: 50),
-            Center(
-              child: Column(
-                children: [
-                  Image.asset(
-                    'assets/images/BooK.png',
-                    width: 400,
-                    height: 200,
-                    fit: BoxFit.contain,
-                  ),
-                ],
-              ),
-            ),
-            const SizedBox(height: 30),
-            // Menu options
-            Expanded(
-              child: GridView.count(
-                crossAxisCount: 2,
-                mainAxisSpacing: 20,
-                crossAxisSpacing: 20,
-                padding: const EdgeInsets.all(20),
-                children: [
-                  _buildMenuOption(
-                    icon: Icons.vibration,
-                    label: "Vibration",
-                    onPressed: () {
-                      // Handle Vibration button logic
-                    },
-                  ),
-                  _buildMenuOption(
-                    icon: Icons.music_note,
-                    label: "Music",
-                    onPressed: () {
-                      // Handle Music button logic
-                    },
-                  ),
-                  _buildMenuOption(
-                    icon: Icons.volume_up,
-                    label: "Sound",
-                    onPressed: () {
-                      // Handle Sound button logic
-                    },
-                  ),
-                  _buildMenuOption(
-                    icon: Icons.support_agent,
-                    label: "Support",
-                    onPressed: () {
-                      // Handle Support button logic
-                    },
-                  ),
-                  _buildMenuOption(
-                    icon: Icons.person_add,
-                    label: "Invite Friend",
-                    onPressed: () {
-                      // Handle Invite Friend button logic
-                    },
-                  ),
-                  // Exit Button
-                  _buildMenuOption(
-                    icon: Icons.exit_to_app,
-                    label: "Exit",
-                    onPressed: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(builder: (context) => const ExitPage()),
-                      ); // Navigate to ExitPage
-                    },
-                  ),
-                ],
-              ),
-            ),
-            // Back Button (Cross Icon)
-            Container(
-              width: 60, // Outer container for the white border
-              height: 70,
-              padding: const EdgeInsets.all(2.0),
-              decoration: BoxDecoration(
-                shape: BoxShape.circle, // Outer container as a circle
-                color: Colors.white, // White border
-                boxShadow: [
-                  BoxShadow(
-                    color: Color(0xFF4169E1).withOpacity(0.4), // Shadow for depth
-                    blurRadius: 10.0,
-                    spreadRadius: 1.0,
-                    offset: Offset(2, 2),
-                  ),
-                ],
-              ),
-              child: Container(
-                width: 50, // Inner container for the button
-                height: 50,
-                padding: const EdgeInsets.all(5.0),
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle, // Inner container as a circle
-                  gradient: const LinearGradient(
-                    colors: [
-                      Color(0xFFFF4DC3), // Gradient blue start
-                      Color(0xFF0066FF), // Gradient pink end
-                    ],
-                    begin: Alignment.topLeft,
-                    end: Alignment.bottomRight,
-                  ),
+        child: SafeArea(
+          child: LayoutBuilder(
+            builder: (context, constraints) {
+              return SingleChildScrollView(
+                child: Column(
+                  children: [
+                    SizedBox(height: screenHeight * 0.05),
+                    Center(
+                      child: Image.asset(
+                        'assets/images/BooK.png',
+                        width: screenWidth * 0.6,
+                        height: screenHeight * 0.3,
+                        fit: BoxFit.contain,
+                      ),
+                    ),
+                    SizedBox(height: screenHeight * 0.02),
+                    Padding(
+                      padding:
+                          EdgeInsets.symmetric(horizontal: screenWidth * 0.1),
+                      child: GridView.count(
+                        shrinkWrap: true,
+                        physics: NeverScrollableScrollPhysics(),
+                        crossAxisCount: 2,
+                        mainAxisSpacing: screenHeight * 0.03,
+                        crossAxisSpacing: screenWidth * 0.05,
+                        children: [
+                          _buildImageButton(
+                              imagePath: 'assets/images/Vibration.png',
+                              label: "Vibration",
+                              onPressed: () {}),
+                          _buildImageButton(
+                            imagePath: isMusicPlaying
+                                ? 'assets/images/Music.png'
+                                : 'assets/images/MCross.png',
+                            label: "Music",
+                            onPressed: _toggleMusic,
+                          ),
+                          _buildImageButton(
+                              imagePath: 'assets/images/Sound.png',
+                              label: "Sound",
+                              onPressed: () {}),
+                          _buildImageButton(
+                              imagePath: 'assets/images/Support.png',
+                              label: "Support",
+                              onPressed: () {}),
+                          _buildImageButton(
+                              imagePath: 'assets/images/InviteFriends.png',
+                              label: "Invite Friend",
+                              onPressed: () {}),
+                          _buildImageButton(
+                            imagePath: 'assets/images/Exit.png',
+                            label: "Exit",
+                            onPressed: () {
+                              Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) => const ExitPage()));
+                            },
+                          ),
+                        ],
+                      ),
+                    ),
+                    SizedBox(height: screenHeight * 0.02),
+                    Container(
+                      width: screenWidth * 0.12,
+                      height: screenHeight * 0.1,
+                      padding: const EdgeInsets.all(2.0),
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        color: Colors.white,
+                        boxShadow: [
+                          BoxShadow(
+                            color: Color(0xFF4169E1).withAlpha(51),
+                            blurRadius: 10.0,
+                            spreadRadius: 1.0,
+                            offset: Offset(2, 2),
+                          ),
+                        ],
+                      ),
+                      child: Container(
+                        width: screenWidth * 0.09,
+                        height: screenWidth * 0.09,
+                        padding: const EdgeInsets.all(1.0),
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          gradient: const LinearGradient(
+                            colors: [
+                              Color(0x80FF4DC3),
+                              Color(0xFF002174),
+                              Color(0xFFD9D9D9),
+                            ],
+                            begin: Alignment.topCenter,
+                            end: Alignment.bottomCenter,
+                          ),
+                        ),
+                        child: IconButton(
+                          onPressed: () {
+                            Navigator.pop(context);
+                          },
+                          icon: const Icon(
+                            Icons.close,
+                            color: Colors.white,
+                            size: 32,
+                          ),
+                          padding: EdgeInsets.zero,
+                        ),
+                      ),
+                    ),
+                    SizedBox(height: screenHeight * 0.02),
+                  ],
                 ),
-                child: IconButton(
-                  onPressed: () {
-                    Navigator.pop(context); // Navigate back to the previous screen
-                  },
-                  icon: const Icon(
-                    Icons.close, // Cross icon
-                    color: Colors.white, // Icon color
-                    size: 40, // Icon size
-                  ),
-                  padding: EdgeInsets.zero, // Remove any padding around the icon
-                ),
-              ),
-            ),
-
-            const SizedBox(height: 20),
-          ],
+              );
+            },
+          ),
         ),
       ),
     );
   }
 
-  // Helper method to build a menu option
-  Widget _buildMenuOption({
-    required IconData icon,
+  Widget _buildImageButton({
+    required String imagePath,
     required String label,
     required VoidCallback onPressed,
   }) {
     return Column(
+      mainAxisSize: MainAxisSize.min,
       children: [
-        ElevatedButton(
-          onPressed: onPressed,
-          style: ElevatedButton.styleFrom(
-            shape: const CircleBorder(),
-            padding: const EdgeInsets.all(20),
-            backgroundColor: Colors.white, // Button color
-            foregroundColor: Colors.pink, // Icon and ripple color
-          ),
-          child: Icon(
-            icon,
-            size: 30,
+        GestureDetector(
+          onTap: onPressed,
+          child: Container(
+            width: 110,
+            height: 110,
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              gradient: const LinearGradient(
+                colors: [
+                  Color(0xFFFF4DC3),
+                  Color(0xFF002174),
+                  Color(0xFFD9D9D9),
+                ],
+                begin: Alignment.topCenter,
+                end: Alignment.bottomCenter,
+              ),
+            ),
+            child: Center(
+              child: Image.asset(
+                imagePath,
+                width: 100,
+                height: 100,
+                fit: BoxFit.contain,
+              ),
+            ),
           ),
         ),
-        const SizedBox(height: 10),
-        Text(
-          label,
-          style: const TextStyle(
-            fontFamily: 'CherryBombOne-Regular',
-            fontSize: 16,
-            fontWeight: FontWeight.bold,
-            color: Colors.black,
+        SizedBox(height: 8),
+        Expanded(
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 5.0),
+            child: Text(
+              label,
+              textAlign: TextAlign.center,
+              softWrap: true,
+              overflow: TextOverflow.visible,
+              style: const TextStyle(
+                fontFamily: 'CherryBombOne-Regular',
+                fontSize: 16,
+                fontWeight: FontWeight.bold,
+                color: Colors.black,
+              ),
+            ),
           ),
         ),
       ],

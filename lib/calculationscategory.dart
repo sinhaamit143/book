@@ -7,8 +7,14 @@ class CalculationsCategory extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // Get screen dimensions
+    double screenWidth = MediaQuery.of(context).size.width;
+    double screenHeight = MediaQuery.of(context).size.height;
+
     return Scaffold(
       body: Container(
+        width: screenWidth,
+        height: screenHeight,
         decoration: const BoxDecoration(
           image: DecorationImage(
             image: AssetImage('assets/images/Loading Screen.png'),
@@ -19,43 +25,17 @@ class CalculationsCategory extends StatelessWidget {
           children: [
             // Back Button
             Positioned(
-              top: 40,
-              left: 30,
-              child: Container(
-                padding: const EdgeInsets.all(2.0), // Space for the white border
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  color: Colors.white, // White border
-                  boxShadow: [
-                    BoxShadow(
-                      color: Color(0xFF4169E1), // Royal blue shadow color
-                      blurRadius: 10.0, // Shadow blur
-                      spreadRadius: 1.0, // Shadow spread
-                    ),
-                  ],
-                ),
-                child: Container(
-                  padding: const EdgeInsets.all(5.0), // Space around the icon
-                  decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    gradient: const LinearGradient(
-                      colors: [
-                        Color(0xFFFF4DC3), // Pink
-                        Color(0xFF0066FF), // Blue
-                      ],
-                      begin: Alignment.topCenter,
-                      end: Alignment.bottomCenter,
-                    ),
-                  ),
-                  child: IconButton(
-                    onPressed: () {
-                      Navigator.pop(context); // Navigate back to the previous screen
-                    },
-                    icon: const Icon(
-                      Icons.arrow_back, // Back button icon
-                      color: Colors.white, // White icon color
-                      size: 30, // Icon size
-                    ),
+              top: screenHeight * 0.05, // 5% from the top
+              left: screenWidth * 0.07, // 7% from the left
+              child: _buildGradientCircle(
+                child: IconButton(
+                  onPressed: () {
+                    Navigator.pop(context);
+                  },
+                  icon: const Icon(
+                    Icons.arrow_back,
+                    color: Colors.white,
+                    size: 22,
                   ),
                 ),
               ),
@@ -63,45 +43,20 @@ class CalculationsCategory extends StatelessWidget {
 
             // Menu Button
             Positioned(
-              top: 40,
-              right: 30,
-              child: Container(
-                padding: const EdgeInsets.all(2.0), // Adds space around the icon
-                decoration: BoxDecoration(
-                  shape: BoxShape.rectangle, // Square shape
-                  borderRadius: BorderRadius.circular(12.0), // Rounded edges
-                  gradient: const LinearGradient(
-                    colors: [
-                      Color(0xFFFF4DC3), // Pink
-                      Color(0xFF0066FF), // Blue
-                    ],
-                    begin: Alignment.topCenter,
-                    end: Alignment.bottomCenter,
-                  ),
-                  border: Border.all(
-                    color: Colors.white, // White border
-                    width: 2.0, // Border width
-                  ),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Color(0xFF4169E1), // Royal blue shadow color
-                      blurRadius: 10.0, // Shadow blur
-                      spreadRadius: 1.0, // Shadow spread
-                    ),
-                  ],
-                ),
+              top: screenHeight * 0.05, // 5% from the top
+              right: screenWidth * 0.07, // 7% from the right
+              child: _buildGradientSquare(
                 child: IconButton(
                   icon: const Icon(
-                    Icons.menu, // Hamburger menu icon
-                    color: Colors.white, // White icon color
-                    size: 40, // Icon size
+                    Icons.menu,
+                    color: Colors.white,
+                    size: 22,
                   ),
-                  iconSize: 10, // Ensures consistent padding within the square
                   onPressed: () {
                     Navigator.push(
                       context,
                       MaterialPageRoute(builder: (context) => const MenuScreen()),
-                    ); // Navigate to menu.dart
+                    );
                   },
                 ),
               ),
@@ -110,73 +65,77 @@ class CalculationsCategory extends StatelessWidget {
             // Content
             Column(
               children: [
-                const SizedBox(height: 200),
-                // Logo
+                SizedBox(height: screenHeight * 0.15), // Adjusted spacing dynamically
                 Center(
                   child: Image.asset(
                     'assets/images/BooK.png',
-                    width: 400,
+                    width: screenWidth * 0.6, // Adjusted dynamically
                   ),
                 ),
-                const SizedBox(height: 50),
-                // Buttons
+                SizedBox(height: screenHeight * 0.05), // Adjusted spacing dynamically
+
+                // Buttons Grid
                 Expanded(
                   child: GridView.count(
                     crossAxisCount: 2,
-                    mainAxisSpacing: 20,
-                    crossAxisSpacing: 20,
-                    padding: const EdgeInsets.all(20),
+                    mainAxisSpacing: screenHeight * 0.03, // Dynamic spacing
+                    crossAxisSpacing: screenWidth * 0.05, // Dynamic spacing
+                    padding: EdgeInsets.all(screenWidth * 0.05), // Adjusted padding
                     children: [
-                      // Plus Button
-                      _buildIconButton(
-                        icon: Icons.add,
+                      _buildImageButton(
+                        image: 'assets/images/Plus.png',
                         label: "Plus",
+                        screenWidth: screenWidth,
+                        screenHeight: screenHeight,
                         onPressed: () {
                           Navigator.push(
                             context,
                             MaterialPageRoute(
                               builder: (context) => const NumberGame(),
                             ),
-                          ); // Navigate to numbergame.dart
+                          );
                         },
                       ),
-                      // Minus Button
-                      _buildIconButton(
-                        icon: Icons.remove,
+                      _buildImageButton(
+                        image: 'assets/images/Minus.png',
                         label: "Minus",
+                        screenWidth: screenWidth,
+                        screenHeight: screenHeight,
                         onPressed: () {
                           Navigator.push(
                             context,
                             MaterialPageRoute(
                               builder: (context) => const NumberGame(),
                             ),
-                          ); // Navigate to numbergame.dart
+                          );
                         },
                       ),
-                      // Multiply Button
-                      _buildIconButton(
-                        icon: Icons.close,
+                      _buildImageButton(
+                        image: 'assets/images/Multiply.png',
                         label: "Multiply",
+                        screenWidth: screenWidth,
+                        screenHeight: screenHeight,
                         onPressed: () {
                           Navigator.push(
                             context,
                             MaterialPageRoute(
                               builder: (context) => const NumberGame(),
                             ),
-                          ); // Navigate to numbergame.dart
+                          );
                         },
                       ),
-                      // Divide Button
-                      _buildIconButton(
-                        icon: Icons.horizontal_rule,
+                      _buildImageButton(
+                        image: 'assets/images/Divide.png',
                         label: "Divide",
+                        screenWidth: screenWidth,
+                        screenHeight: screenHeight,
                         onPressed: () {
                           Navigator.push(
                             context,
                             MaterialPageRoute(
                               builder: (context) => const NumberGame(),
                             ),
-                          ); // Navigate to numbergame.dart
+                          );
                         },
                       ),
                     ],
@@ -190,35 +149,114 @@ class CalculationsCategory extends StatelessWidget {
     );
   }
 
-  // Helper method to build each icon button
-  Widget _buildIconButton({
-    required IconData icon,
+  Widget _buildGradientCircle({required Widget child}) {
+    return Container(
+      width: 40.0, // Adjust button width
+      height: 40.0, // Adjust button height
+      decoration: BoxDecoration(
+        shape: BoxShape.circle,
+        gradient: const LinearGradient(
+          colors: [Color(0xFFFF4DC3), Color(0xFF0066FF)],
+          begin: Alignment.topCenter,
+          end: Alignment.bottomCenter,
+        ),
+        border: Border.all(color: Colors.white, width: 1.5),
+        boxShadow: [
+          BoxShadow(
+            color: Color(0xFF4169E1),
+            blurRadius: 10.0,
+            spreadRadius: 1.0,
+          ),
+        ],
+      ),
+      child: child,
+    );
+  }
+
+  Widget _buildGradientSquare({required Widget child}) {
+    return Container(
+      width: 40.0, // Adjust button width
+      height: 40.0, // Adjust button height
+      decoration: BoxDecoration(
+        shape: BoxShape.rectangle,
+        borderRadius: BorderRadius.circular(12.0),
+        gradient: const LinearGradient(
+          colors: [Color(0xFFFF4DC3), Color(0xFF0066FF)],
+          begin: Alignment.topCenter,
+          end: Alignment.bottomCenter,
+        ),
+        border: Border.all(color: Colors.white, width: 1.5),
+        boxShadow: [
+          BoxShadow(
+            color: Color(0xFF4169E1),
+            blurRadius: 10.0,
+            spreadRadius: 1.0,
+          ),
+        ],
+      ),
+      child: child,
+    );
+  }
+
+  Widget _buildImageButton({
+    required String image,
     required String label,
     required VoidCallback onPressed,
+    required double screenWidth,
+    required double screenHeight,
   }) {
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
-        ElevatedButton(
-          onPressed: onPressed,
-          style: ElevatedButton.styleFrom(
-            shape: const CircleBorder(),
-            padding: const EdgeInsets.all(20),
-            backgroundColor: Colors.white, // Button color
-            foregroundColor: Colors.pink, // Icon and ripple color
-          ),
-          child: Icon(
-            icon,
-            size: 70, // Icon size
+        GestureDetector(
+          onTap: onPressed,
+          child: Stack(
+            alignment: Alignment.center,
+            children: [
+              Container(
+                width: screenWidth * 0.3,
+                height: screenWidth * 0.3,
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  gradient: LinearGradient(
+                    colors: [
+                      Color(0xFFFF4DC3),
+                      Color(0xFF002174),
+                      Color(0xFFD9D9D9),
+                    ],
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                  ),
+                ),
+              ),
+              ClipOval(
+                child: Image.asset(
+                  image,
+                  width: screenWidth * 0.25,
+                  height: screenWidth * 0.25,
+                  fit: BoxFit.cover,
+                ),
+              ),
+            ],
           ),
         ),
-        const SizedBox(height: 10),
-        Text(
-          label,
-          style: const TextStyle(
-            fontFamily: 'CherryBomb',
-            fontSize: 26,
-            color: Colors.black,
+        SizedBox(height: screenHeight * 0.005), // Reduced spacing dynamically
+
+        // Use SizedBox instead of Container
+        SizedBox(
+          width: screenWidth * 0.35, // Ensuring proper width to avoid overflow
+          child: FittedBox(
+            fit: BoxFit.scaleDown, // Prevents text from overflowing
+            child: Text(
+              label,
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                fontFamily: 'CherryBombOne-Regular',
+                fontSize: screenWidth * 0.05, // Reduced for better scaling
+                color: Colors.black,
+                letterSpacing: 2.0,
+              ),
+            ),
           ),
         ),
       ],

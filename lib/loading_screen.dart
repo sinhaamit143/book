@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'info.dart'; // Import the InfoScreen file
+import 'info.dart';
 
 class LoadingScreen extends StatefulWidget {
   const LoadingScreen({super.key});
@@ -8,18 +8,19 @@ class LoadingScreen extends StatefulWidget {
   LoadingScreenState createState() => LoadingScreenState();
 }
 
-class LoadingScreenState extends State<LoadingScreen>
-    with SingleTickerProviderStateMixin {
+class LoadingScreenState extends State<LoadingScreen> with SingleTickerProviderStateMixin {
   late AnimationController _controller;
 
   @override
   void initState() {
     super.initState();
+
     // Initialize the animation controller for the LinearProgressIndicator
     _controller = AnimationController(
-      duration: const Duration(seconds: 10), // Slower animation speed
+      duration: const Duration(seconds: 10),
       vsync: this,
     )..repeat();
+
 
     // Trigger navigation after a delay
     Future.delayed(const Duration(seconds: 10), () {
@@ -32,73 +33,109 @@ class LoadingScreenState extends State<LoadingScreen>
     });
   }
 
+
   @override
   void dispose() {
-    _controller.dispose(); // Dispose the controller to free up resources
+    _controller.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Container(
-        decoration: BoxDecoration(
-          image: DecorationImage(
-            image: AssetImage('assets/images/Loading Screen.png'),
-            fit: BoxFit.cover,
-          ),
-        ),
-        child: Center(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Image.asset(
-                'assets/images/BooK.png', // Book logo
-                width: 400,
-                height: 200,
-                fit: BoxFit.contain,
+      body: LayoutBuilder(
+        builder: (context, constraints) {
+          bool isLandscape = constraints.maxWidth > constraints.maxHeight;
+
+          double imageWidth = isLandscape
+              ? constraints.maxWidth * 0.4
+              : constraints.maxWidth * 0.6;
+
+          double imageHeight = isLandscape
+              ? constraints.maxHeight * 0.4
+              : constraints.maxHeight * 0.3;
+
+          double fontSize = isLandscape
+              ? constraints.maxWidth * 0.07
+              : constraints.maxWidth * 0.1;
+
+          double progressBarWidth = isLandscape
+              ? constraints.maxWidth * 0.6
+              : constraints.maxWidth * 0.8;
+
+          return Container(
+            decoration: const BoxDecoration(
+              image: DecorationImage(
+                image: AssetImage('assets/images/Loading Screen.png'),
+                fit: BoxFit.cover,
               ),
-              const SizedBox(height: 20),
-              Image.asset(
-                'assets/images/Loading-text.png', // Loading text
-                width: 300,
-                height: 100,
-                fit: BoxFit.contain,
-              ),
-              const SizedBox(height: 30),
-              SizedBox(
-                width: 300,
-                height: 20,
-                child: Container(
-                  decoration: BoxDecoration(
-                    boxShadow: [
-                      BoxShadow(
-                        color: Color(0xFF5A1945).withOpacity(0.8), // Shadow color with transparency
-                        blurRadius: 10, // Blur radius for the shadow
-                        spreadRadius: 2, // Spread radius for the shadow
-                        offset: Offset(4, 4), // Shadow position
-                      ),
-                    ],
+            ),
+            child: Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  Image.asset(
+                    'assets/images/BooK.png',
+                    width: imageWidth,
+                    height: imageHeight,
+                    fit: BoxFit.contain,
                   ),
-                  child: ClipRRect(
-                    borderRadius: const BorderRadius.all(Radius.circular(30)), // Rounded corners
-                    child: AnimatedBuilder(
-                      animation: _controller,
-                      builder: (context, child) {
-                        return LinearProgressIndicator(
-                          value: _controller.value,
-                          color: const Color(0xFFD383B6), // Baby pink color
-                          backgroundColor: const Color(0xFFCCCCCC), // Light pink background
-                        );
-                      },
+                  const SizedBox(height: 20),
+
+                  // Loading Text
+                  Text(
+                    'Loading . . .',
+                    style: TextStyle(
+                      fontFamily: 'CherryBombOne-Regular',
+                      fontSize: fontSize,
+                      color: const Color(0xFFD383B6),
+                      shadows: const [
+                        Shadow(
+                          offset: Offset(2.0, 2.0),
+                          color: Colors.black,
+                          blurRadius: 3.0,
+                        ),
+                      ],
                     ),
                   ),
-                ),
-              ),
+                  const SizedBox(height: 30),
 
-            ],
-          ),
-        ),
+                  // Progress Bar
+                  SizedBox(
+                    width: progressBarWidth,
+                    height: constraints.maxHeight * 0.02,
+                    child: Container(
+                      decoration: BoxDecoration(
+                        boxShadow: [
+                          BoxShadow(
+                            color: const Color(0xFF5A1945).withAlpha(204),
+                            blurRadius: 10,
+                            spreadRadius: 2,
+                            offset: const Offset(4, 4),
+                          ),
+                        ],
+                      ),
+                      child: ClipRRect(
+                        borderRadius: const BorderRadius.all(Radius.circular(30)),
+                        child: AnimatedBuilder(
+                          animation: _controller,
+                          builder: (context, child) {
+                            return LinearProgressIndicator(
+                              value: _controller.value,
+                              color: const Color(0xFFD383B6),
+                              backgroundColor: const Color(0xFFCCCCCC),
+                            );
+                          },
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          );
+        },
       ),
     );
   }

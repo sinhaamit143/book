@@ -1,14 +1,19 @@
 import 'package:flutter/material.dart';
-import 'play_screen.dart'; // Import the PlayScreen file
+import 'play_screen.dart';
 
 class TermsScreen extends StatelessWidget {
   const TermsScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
+    double screenWidth = MediaQuery.of(context).size.width;
+    double screenHeight = MediaQuery.of(context).size.height;
+    bool isLandscape = screenWidth > screenHeight;
+
     return Scaffold(
       body: Container(
-        decoration: BoxDecoration(
+        height: screenHeight,
+        decoration: const BoxDecoration(
           image: DecorationImage(
             image: AssetImage('assets/images/Loading Screen.png'),
             fit: BoxFit.cover,
@@ -19,120 +24,145 @@ class TermsScreen extends StatelessWidget {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
+                SizedBox(height: isLandscape ? 30 : 50),
+
                 // Logo
                 Image.asset(
                   'assets/images/BooK.png',
-                  width: 400,
-                  height: 200,
+                  width: screenWidth * 0.5,
+                  height: screenHeight * 0.2,
                   fit: BoxFit.contain,
                 ),
-                const SizedBox(height: 20),
-                // Terms box
-                Container(
-                  width: 300,
-                  padding: const EdgeInsets.all(20),
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(20),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.purpleAccent.withOpacity(0.5),
-                        spreadRadius: 3,
-                        blurRadius: 5,
-                      ),
-                    ],
-                  ),
-                  child: Column(
+                SizedBox(height: isLandscape ? 10 : 20),
+
+                // Gradient Box & White Box Stack
+                Padding(
+                  padding: EdgeInsets.symmetric(horizontal: screenWidth * 0.05),
+                  child: Stack(
+                    alignment: Alignment.center,
                     children: [
-                      const Text(
-                        "We've updated our Terms",
-                        style: TextStyle(
-                          fontFamily: 'CherryBomb',
-                          fontSize: 18,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.blue,
-                        ),
-                      ),
-                      const SizedBox(height: 10),
-                      const Text(
-                        "Neque porro quisquam est qui dolorem ipsum quia dolor sit amet, consectetur, adipisci velit...",
-                        textAlign: TextAlign.center,
-                        style: TextStyle(
-                          fontSize: 14,
-                          color: Colors.black87,
-                        ),
-                      ),
-                      const SizedBox(height: 10),
-                      TextButton(
-                        onPressed: () {
-                          // Add logic if needed
-                        },
-                        child: const Text(
-                          "Terms of Services\nPrivacy Policy",
-                          textAlign: TextAlign.center,
-                          style: TextStyle(
-                            decoration: TextDecoration.underline,
-                            color: Colors.blue,
+                      // Gradient Background Box (Bigger in Landscape)
+                      Container(
+                        width: screenWidth * 0.9,
+                        height: isLandscape ? screenHeight * 0.65 : screenHeight * 0.45,
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(25),
+                          gradient: const LinearGradient(
+                            colors: [
+                              Color(0xFFD9D9D9),
+                              Color(0xC0FF4DC3),
+                              Color(0xC0002FA7),
+                            ],
+                            begin: Alignment.topCenter,
+                            end: Alignment.bottomCenter,
                           ),
-                        ),
-                      ),
-                      const SizedBox(height: 20),
-                      // Accept button
-                      ElevatedButton(
-                        onPressed: () {
-                          // Navigate to PlayScreen when "Accept" is clicked
-                          Navigator.pushReplacement(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => const PlayScreen(),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.black.withAlpha(51),
+                              blurRadius: 10,
+                              spreadRadius: 2,
                             ),
-                          );
-                        },
-                        style: ElevatedButton.styleFrom(
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 0,
-                            vertical: 0,
-                          ),
-                          backgroundColor: Colors.transparent, // Set background to transparent to show the gradient
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(25), // Same rounded corners as the decoration
-                            side: const BorderSide(
-                              color: Color(0xFF002FA7), // Dark blue border
-                              width: 2, // Border width
-                            ),
-                          ),
-                        ),
-                        child: Ink(
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(25), // Same rounded corners
-                            gradient: const LinearGradient(
-                              colors: [
-                                Color(0xFFD9D9D9),
-                                Color(0xFF002FA7), // Gradient blue
-                                Color(0xFFFF4DC3), // Gradient pink
-                              ],
-                              begin: Alignment.topCenter,
-                              end: Alignment.bottomCenter,
-                            ),
-                          ),
-                          child: Container(
-                            alignment: Alignment.center,
-                            child: const Text(
-                              "Accept",
-                              style: TextStyle(
-                                fontFamily: 'CherryBombOne-Regular',
-                                fontSize: 20,
-                                fontWeight: FontWeight.bold,
-                                color: Colors.white, // Text color
-                              ),
-                            ),
-                          ),
+                          ],
                         ),
                       ),
 
+                      // White Terms Box (Inside Gradient Box)
+                      Container(
+                        width: screenWidth * 0.8,
+                        padding: EdgeInsets.all(isLandscape ? 20 : 15),
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(20),
+                        ),
+                        child: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            const Text(
+                              "We've updated our Terms",
+                              textAlign: TextAlign.center,
+                              style: TextStyle(
+                                fontFamily: 'CherryBombOne-Regular',
+                                fontSize: 20,
+                                color: Color(0xFF002174),
+                              ),
+                            ),
+                            SizedBox(height: isLandscape ? 8 : 10),
+                            const Text(
+                              "Neque porro quisquam est qui dolorem ipsum quia dolor sit amet, consectetur, adipisci velit...",
+                              textAlign: TextAlign.center,
+                              style: TextStyle(
+                                fontSize: 14,
+                                color: Colors.black87,
+                              ),
+                            ),
+                            SizedBox(height: isLandscape ? 8 : 10),
+                            TextButton(
+                              onPressed: () {},
+                              child: const Text(
+                                "Terms of Services\nPrivacy Policy",
+                                textAlign: TextAlign.center,
+                                style: TextStyle(
+                                  decoration: TextDecoration.underline,
+                                  color: Colors.blue,
+                                ),
+                              ),
+                            ),
+                            SizedBox(height: isLandscape ? 10 : 15),
+
+                            // Accept Button
+                            ElevatedButton(
+                              onPressed: () {
+                                Navigator.pushReplacement(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => const PlayScreen(),
+                                  ),
+                                );
+                              },
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: Colors.transparent,
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(25),
+                                ),
+                                elevation: 0,
+                              ),
+                              child: Ink(
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(25),
+                                  gradient: const LinearGradient(
+                                    colors: [
+                                      Color(0xC0D9D9D9),
+                                      Color(0xC0FF4DC3),
+                                      Color(0xC0002FA7),
+                                    ],
+                                    begin: Alignment.topCenter,
+                                    end: Alignment.bottomCenter,
+                                  ),
+                                ),
+                                child: Padding(
+                                  padding: EdgeInsets.symmetric(
+                                    horizontal: screenWidth * 0.15,
+                                    vertical: isLandscape ? 6 : 10,
+                                  ),
+                                  child: const Text(
+                                    "Accept",
+                                    style: TextStyle(
+                                      fontFamily: 'CherryBombOne-Regular',
+                                      fontSize: 20,
+                                      color: Colors.white,
+                                      letterSpacing: 2.0,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
                     ],
                   ),
                 ),
+                SizedBox(height: isLandscape ? 30 : 50),
               ],
             ),
           ),

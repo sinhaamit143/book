@@ -1,193 +1,248 @@
 import 'package:flutter/material.dart';
-import 'menu.dart'; // Import the menu.dart page
-import 'wordscategory.dart'; // Import the wordscategory.dart page
-import 'calculationscategory.dart'; // Import the calculationscategory.dart page
+import 'menu.dart';
+import 'wordscategory.dart';
+import 'calculationscategory.dart';
+import 'colorsgame.dart';
+import 'poems.dart';
 
 class CategoriesScreen extends StatelessWidget {
   const CategoriesScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: Container(
-        decoration: const BoxDecoration(
-          image: DecorationImage(
-            image: AssetImage('assets/images/Loading Screen.png'),
-            fit: BoxFit.cover,
-          ),
-        ),
-        child: Stack(
-          children: [
-            // Header with Back Button and Menu Button
-            // Back Button
-            Positioned(
-              top: 40,
-              left: 30,
-              child: Container(
-                padding: const EdgeInsets.all(2.0), // Space for the white border
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  color: Colors.white, // White border
-                  boxShadow: [
-                    BoxShadow(
-                      color: Color(0xFF4169E1), // Royal blue shadow color
-                      blurRadius: 10.0, // Shadow blur
-                      spreadRadius: 1.0, // Shadow spread
-                    ),
-                  ],
-                ),
-                child: Container(
-                  padding: const EdgeInsets.all(5.0), // Space around the icon
-                  decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    gradient: const LinearGradient(
-                      colors: [
-                        Color(0xFFFF4DC3), // Pink
-                        Color(0xFF0066FF), // Blue
-                      ],
-                      begin: Alignment.topCenter,
-                      end: Alignment.bottomCenter,
-                    ),
-                  ),
-                  child: IconButton(
-                    onPressed: () {
-                      Navigator.pop(context); // Navigate back to the previous screen
-                    },
-                    icon: const Icon(
-                      Icons.arrow_back, // Back button icon
-                      color: Colors.white, // White icon color
-                      size: 30, // Icon size
-                    ),
-                  ),
-                ),
-              ),
-            ),
+    // Get screen dimensions
+    double screenWidth = MediaQuery.of(context).size.width;
+    double screenHeight = MediaQuery.of(context).size.height;
 
-            // Menu Button
-            Positioned(
-              top: 40,
-              right: 30,
-              child: Container(
-                padding: const EdgeInsets.all(2.0), // Adds space around the icon
-                decoration: BoxDecoration(
-                  shape: BoxShape.rectangle, // Square shape
-                  borderRadius: BorderRadius.circular(12.0), // Rounded edges
-                  gradient: const LinearGradient(
-                    colors: [
-                      Color(0xFFFF4DC3), // Pink
-                      Color(0xFF0066FF), // Blue
-                    ],
-                    begin: Alignment.topCenter,
-                    end: Alignment.bottomCenter,
-                  ),
-                  border: Border.all(
-                    color: Colors.white, // White border
-                    width: 2.0, // Border width
-                  ),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Color(0xFF4169E1), // Royal blue shadow color
-                      blurRadius: 10.0, // Shadow blur
-                      spreadRadius: 1.0, // Shadow spread
-                    ),
-                  ],
-                ),
-                child: IconButton(
-                  icon: const Icon(
-                    Icons.menu, // Hamburger menu icon
-                    color: Colors.white, // White icon color
-                    size: 40, // Icon size
-                  ),
-                  iconSize: 10, // Ensures consistent padding within the square
-                  onPressed: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(builder: (context) => const MenuScreen()),
-                    ); // Navigate to menu.dart
-                  },
-                ),
+    return Scaffold(
+      body: LayoutBuilder(
+        builder: (context, constraints) {
+          // Get updated screen dimensions based on the layout builder's constraints
+          screenWidth = constraints.maxWidth;
+          screenHeight = constraints.maxHeight;
+
+          return Container(
+            decoration: const BoxDecoration(
+              image: DecorationImage(
+                image: AssetImage('assets/images/Loading Screen.png'),
+                fit: BoxFit.cover,
               ),
             ),
-            // Content
-            Column(
+            child: Stack(
               children: [
-                const SizedBox(height: 200),
-                // Logo
-                Center(
-                  child: Image.asset(
-                    'assets/images/BooK.png',
-                    width: 400,
+                // Back Button
+                Positioned(
+                  top: screenHeight * 0.05, // Adjusted top spacing based on screen size
+                  left: screenWidth * 0.05, // Adjusted left spacing based on screen size
+                  child: _buildGradientCircle(
+                    child: IconButton(
+                      onPressed: () {
+                        Navigator.pop(context);
+                      },
+                      icon: const Icon(
+                        Icons.arrow_back,
+                        color: Colors.white,
+                        size: 22,
+                      ),
+                    ),
                   ),
                 ),
-                const SizedBox(height: 10),
-                const SizedBox(height: 50),
-                // Scrollable Icon Buttons
-                Expanded(
-                  child: PageView.builder(
-                    itemCount: 2, // Number of categories (can increase in the future)
-                    controller: PageController(viewportFraction: 0.6),
-                    itemBuilder: (context, index) {
-                      final isCentered = index == 0;
-                      return AnimatedContainer(
-                        duration: const Duration(milliseconds: 300),
-                        margin: const EdgeInsets.symmetric(horizontal: 10),
-                        child: Transform.scale(
-                          scale: isCentered ? 1.0 : 1.0,
-                          child: GestureDetector(
-                            onTap: () {
-                              if (index == 0) {
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) => const WordsCategory(),
-                                  ),
-                                ); // Navigate to wordscategory.dart
-                              } else if (index == 1) {
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) =>
-                                    const CalculationsCategory(),
-                                  ),
-                                ); // Navigate to calculationscategory.dart
-                              }
-                            },
-                            child: Column(
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                CircleAvatar(
-                                  radius: 70,
-                                  backgroundColor: Colors.lightGreen,
-                                  child: Icon(
-                                    index == 0
-                                        ? Icons.edit_calendar // Words icon
-                                        : Icons.calculate, // Calculations icon
-                                    size: 100,
-                                    color: Colors.blue,
-                                  ),
-                                ),
-                                const SizedBox(height: 10),
-                                Text(
-                                  index == 0 ? "Words" : "Calculations",
-                                  style: const TextStyle(
-                                    fontFamily: 'CherryBombOne-Regular',
-                                    fontSize: 26,
-                                    color: Colors.black,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ),
-                      );
-                    },
+
+                // Menu Button
+                Positioned(
+                  top: screenHeight * 0.05, // Adjusted top spacing based on screen size
+                  right: screenWidth * 0.05, // Adjusted right spacing based on screen size
+                  child: _buildGradientSquare(
+                    child: IconButton(
+                      icon: const Icon(
+                        Icons.menu,
+                        color: Colors.white,
+                        size: 22,
+                      ),
+                      onPressed: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (context) => const MenuScreen()),
+                        );
+                      },
+                    ),
                   ),
+                ),
+
+                // Logo positioned at the top (adjusted position)
+                Positioned(
+                  top: screenHeight * 0.2, // Adjusted top spacing based on screen size
+                  left: 0,
+                  right: 0,
+                  child: Center(
+                    child: Image.asset(
+                      'assets/images/BooK.png',
+                      width: screenWidth * 0.6, // Adjusted logo width based on screen size
+                    ),
+                  ),
+                ),
+
+                Column(
+                  children: [
+                    SizedBox(height: screenHeight * 0.4), // Adjusted spacing dynamically
+
+                    // Scrollable Image Buttons with Circular Gradient Background
+                    Expanded(
+                      child: PageView.builder(
+                        itemCount: 4, // Now includes Words, Calculations, Colors, and Poems
+                        controller: PageController(viewportFraction: 0.6),
+                        itemBuilder: (context, index) {
+                          // Category Data
+                          final List<Map<String, dynamic>> categories = [
+                            {
+                              "name": "Words",
+                              "image": "assets/images/Weeks.png",
+                              "route": const WordsCategory()
+                            },
+                            {
+                              "name": "Calculations",
+                              "image": "assets/images/Calculations.png",
+                              "route": const CalculationsCategory()
+                            },
+                            {
+                              "name": "Colors",
+                              "image": "assets/images/Colors.png",
+                              "route": const ColorsGame()
+                            },
+                            {
+                              "name": "Poems",
+                              "image": "assets/images/Poems.png",
+                              "route": const Poems()
+                            },
+                          ];
+
+                          return AnimatedContainer(
+                            duration: const Duration(milliseconds: 300),
+                            margin: EdgeInsets.symmetric(horizontal: screenWidth * 0.05), // Adjusted margin
+                            child: Transform.scale(
+                              scale: 1.0,
+                              child: GestureDetector(
+                                onTap: () {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(builder: (context) => categories[index]["route"]),
+                                  );
+                                },
+                                child: Column(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    // Circular Gradient Background with Image
+                                    Stack(
+                                      alignment: Alignment.center,
+                                      children: [
+                                        Container(
+                                          width: screenWidth * 0.4, // Adjusted size dynamically
+                                          height: screenWidth * 0.4, // Adjusted size dynamically
+                                          decoration: BoxDecoration(
+                                            shape: BoxShape.circle,
+                                            gradient: LinearGradient(
+                                              colors: [
+                                                Color(0xFFFF4DC3), // Pink
+                                                Color(0xFF002174), // Blue (50% opacity)
+                                                Color(0xFFD9D9D9), // Gray
+                                              ],
+                                              begin: Alignment.topLeft,
+                                              end: Alignment.bottomRight,
+                                            ),
+                                          ),
+                                        ),
+                                        ClipOval(
+                                          child: Image.asset(
+                                            categories[index]["image"],
+                                            width: screenWidth * 0.35, // Adjusted size dynamically
+                                            height: screenWidth * 0.35, // Adjusted size dynamically
+                                            fit: BoxFit.cover,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                    SizedBox(height: screenHeight * 0.02), // Adjusted spacing dynamically
+                                    Text(
+                                      categories[index]["name"],
+                                      style: const TextStyle(
+                                        fontFamily: 'CherryBombOne-Regular',
+                                        fontSize: 26,
+                                        color: Colors.black,
+                                        letterSpacing: 2.0,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ),
+                          );
+                        },
+                      ),
+                    ),
+                  ],
                 ),
               ],
             ),
-          ],
-        ),
+          );
+        },
       ),
+    );
+  }
+
+  // Helper method for gradient circle (Back Button)
+  Widget _buildGradientCircle({required Widget child}) {
+    return Container(
+      width: 40.0, // Adjust button width
+      height: 40.0, // Adjust button height
+      decoration: BoxDecoration(
+        shape: BoxShape.circle,
+        gradient: const LinearGradient(
+          colors: [
+            Color(0xFFFF4DC3), // Pink
+            Color(0xFF0066FF), // Blue
+          ],
+          begin: Alignment.topCenter,
+          end: Alignment.bottomCenter,
+        ),
+        border: Border.all(color: Colors.white, width: 1.5),
+        boxShadow: [
+          BoxShadow(
+            color: Color(0xFF4169E1),
+            blurRadius: 10.0,
+            spreadRadius: 1.0,
+          ),
+        ],
+      ),
+      child: child,
+    );
+  }
+
+  // Helper method for gradient square (Menu Button)
+  Widget _buildGradientSquare({required Widget child}) {
+    return Container(
+      width: 40.0, // Adjust button width
+      height: 40.0, // Adjust button height
+      decoration: BoxDecoration(
+        shape: BoxShape.rectangle,
+        borderRadius: BorderRadius.circular(12.0),
+        gradient: const LinearGradient(
+          colors: [
+            Color(0xFFFF4DC3), // Pink
+            Color(0xFF0066FF), // Blue
+          ],
+          begin: Alignment.topCenter,
+          end: Alignment.bottomCenter,
+        ),
+        border: Border.all(color: Colors.white, width: 1.5),
+        boxShadow: [
+          BoxShadow(
+            color: Color(0xFF4169E1),
+            blurRadius: 10.0,
+            spreadRadius: 1.0,
+          ),
+        ],
+      ),
+      child: child,
     );
   }
 }
