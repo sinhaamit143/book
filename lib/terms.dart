@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'play_screen.dart';
+import 'utils/audio_manager.dart'; 
 
 class TermsScreen extends StatelessWidget {
   const TermsScreen({super.key});
@@ -97,7 +98,11 @@ class TermsScreen extends StatelessWidget {
                             ),
                             SizedBox(height: isLandscape ? 8 : 10),
                             TextButton(
-                              onPressed: () {},
+                              onPressed: () {
+                                AudioManager().triggerVibration();
+                                AudioManager().playSoundEffect();
+                                // Open Terms of Services & Privacy Policy
+                              },
                               child: const Text(
                                 "Terms of Services\nPrivacy Policy",
                                 textAlign: TextAlign.center,
@@ -112,6 +117,8 @@ class TermsScreen extends StatelessWidget {
                             // Accept Button
                             ElevatedButton(
                               onPressed: () {
+                                AudioManager().triggerVibration();
+                                AudioManager().playSoundEffect();
                                 Navigator.pushReplacement(
                                   context,
                                   MaterialPageRoute(

@@ -40,6 +40,7 @@ dependencies:
   audioplayers: ^6.1.1
   logging: ^1.0.2
   permission_handler: ^11.3.1
+  vibration: ^3.1.2
 
 dev_dependencies:
   flutter_test:
@@ -89,6 +90,7 @@ flutter:
     - assets/images/Colors.png
     - assets/images/Poems.png
     - assets/music/backgroundMusic.mp3
+    - assets/music/bubblePop.mp3
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/to/resolution-aware-images

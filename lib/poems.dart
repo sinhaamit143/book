@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:youtube_player_flutter/youtube_player_flutter.dart';
 import 'menu.dart';
+import 'utils/audio_manager.dart';
 
 class Poems extends StatefulWidget {
   const Poems({super.key});
@@ -15,18 +16,14 @@ class LoadingScreenState extends State<Poems> {
       "title": "The Rainbow Balloon",
       "videoUrl": "https://youtu.be/khsXGETCqVw"
     },
-    {
-      "title": "The Giggle Bug",
-      "videoUrl": "https://youtu.be/_o674p5NZPQ"
-    },
+    {"title": "The Giggle Bug", 
+    "videoUrl": "https://youtu.be/_o674p5NZPQ"},
     {
       "title": "Aha Tamatar Bade Mazedar",
       "videoUrl": "https://youtu.be/6rRRAVSilss"
     },
-    {
-      "title": "5 Little Ducks",
-      "videoUrl": "https://youtu.be/N5YSbaUl9Y4"
-    }
+    {"title": "5 Little Ducks", 
+    "videoUrl": "https://youtu.be/N5YSbaUl9Y4"}
   ];
 
   @override
@@ -46,6 +43,7 @@ class LoadingScreenState extends State<Poems> {
         child: Stack(
           children: [
             CustomScrollView(
+              physics: const ClampingScrollPhysics(), // Added ClampingScrollPhysics
               slivers: [
                 SliverToBoxAdapter(
                   child: Column(
@@ -63,7 +61,7 @@ class LoadingScreenState extends State<Poems> {
                 ),
                 SliverList(
                   delegate: SliverChildBuilderDelegate(
-                        (context, index) => _buildPoemCard(poems[index]),
+                    (context, index) => _buildPoemCard(poems[index]),
                     childCount: poems.length,
                   ),
                 ),
@@ -74,8 +72,13 @@ class LoadingScreenState extends State<Poems> {
               left: screenSize.width * 0.07,
               child: _buildGradientCircle(
                 child: IconButton(
-                  onPressed: () => Navigator.pop(context),
-                  icon: const Icon(Icons.arrow_back, color: Colors.white, size: 22),
+                  onPressed: () { 
+                    AudioManager().triggerVibration();
+                    AudioManager().playSoundEffect();
+                    Navigator.pop(context);
+                    },
+                  icon: const Icon(Icons.arrow_back,
+                      color: Colors.white, size: 22),
                 ),
               ),
             ),
@@ -84,12 +87,16 @@ class LoadingScreenState extends State<Poems> {
               right: screenSize.width * 0.07,
               child: _buildGradientSquare(
                 child: IconButton(
-                  icon: const Icon(Icons.menu, color: Colors.white, size: 22),
-                  onPressed: () => Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) => const MenuScreen()),
-                  ),
-                ),
+                    icon: const Icon(Icons.menu, color: Colors.white, size: 22),
+                    onPressed: () {
+                      AudioManager().triggerVibration();
+                      AudioManager().playSoundEffect();
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => const MenuScreen()),
+                      );
+                    }),
               ),
             ),
           ],
@@ -150,7 +157,7 @@ class LoadingScreenState extends State<Poems> {
       decoration: BoxDecoration(
         shape: BoxShape.circle,
         gradient: const LinearGradient(
-          colors: [Color(0xFFFF4DC3), Color(0xFF0066FF)],
+ colors: [Color(0xFFFF4DC3), Color(0xFF0066FF)],
           begin: Alignment.topCenter,
           end: Alignment.bottomCenter,
         ),

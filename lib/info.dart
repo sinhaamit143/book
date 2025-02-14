@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'terms.dart'; // Import the TermsScreen file
+import 'terms.dart';
+import 'utils/audio_manager.dart'; 
 
 class InfoScreen extends StatefulWidget {
   const InfoScreen({super.key});
@@ -112,7 +113,12 @@ class InfoScreenState extends State<InfoScreen> {
 
                     // Done button
                     ElevatedButton(
-                      onPressed: _saveDataAndNavigate,
+                      //onPressed: _saveDataAndNavigate,
+                      onPressed: () {
+                      AudioManager().triggerVibration();
+                      AudioManager().playSoundEffect();
+                      _saveDataAndNavigate();
+                      },
                       style: ElevatedButton.styleFrom(
                         padding: EdgeInsets.symmetric(
                           horizontal: buttonWidth * 0.2,

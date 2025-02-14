@@ -1,36 +1,38 @@
 import 'package:flutter/material.dart';
-import 'menu.dart'; // Import the menu.dart page
-import 'wordsgame.dart'; // Import the wordsgame.dart page
+import 'menu.dart';
+import 'wordsgame.dart';
+import 'utils/audio_manager.dart';
 
 class WordsCategory extends StatelessWidget {
   const WordsCategory({super.key});
 
   @override
   Widget build(BuildContext context) {
-    // Get the screen width and height
-    double screenWidth = MediaQuery.of(context).size.width;
-    double screenHeight = MediaQuery.of(context).size.height;
-    bool isLandscape = screenWidth > screenHeight; // Check for landscape mode
+    final bool isLandscape = MediaQuery.of(context).orientation == Orientation.landscape;
+    final double screenWidth = MediaQuery.of(context).size.width;
+    final double screenHeight = MediaQuery.of(context).size.height;
 
     return Scaffold(
       body: Container(
-        width: screenWidth, // Set width to the screen width
-        height: screenHeight, // Set height to the screen height
-        decoration: BoxDecoration(
+        width: screenWidth,
+        height: screenHeight,
+        decoration: const BoxDecoration(
           image: DecorationImage(
             image: AssetImage('assets/images/Loading Screen.png'),
-            fit: BoxFit.cover, // This makes the image cover the entire screen
+            fit: BoxFit.cover,
           ),
         ),
         child: Stack(
           children: [
             // Back Button
             Positioned(
-              top: screenHeight * 0.05, // Adjusted based on screen height
-              left: screenWidth * 0.05, // Adjusted based on screen width
+              top: screenHeight * 0.05,
+              left: screenWidth * 0.07,
               child: _buildGradientCircle(
                 child: IconButton(
                   onPressed: () {
+                    AudioManager().triggerVibration();
+                    AudioManager().playSoundEffect();
                     Navigator.pop(context);
                   },
                   icon: const Icon(
@@ -44,8 +46,8 @@ class WordsCategory extends StatelessWidget {
 
             // Menu Button
             Positioned(
-              top: screenHeight * 0.05, // Adjusted based on screen height
-              right: screenWidth * 0.05, // Adjusted based on screen width
+              top: screenHeight * 0.05,
+              right: screenWidth * 0.07,
               child: _buildGradientSquare(
                 child: IconButton(
                   icon: const Icon(
@@ -54,6 +56,8 @@ class WordsCategory extends StatelessWidget {
                     size: 22,
                   ),
                   onPressed: () {
+                    AudioManager().triggerVibration();
+                    AudioManager().playSoundEffect();
                     Navigator.push(
                       context,
                       MaterialPageRoute(builder: (context) => const MenuScreen()),
@@ -63,44 +67,101 @@ class WordsCategory extends StatelessWidget {
               ),
             ),
 
-            // Content
-            Column(
-              children: [
-                SizedBox(height: screenHeight * 0.2), // Adjusted spacing dynamically
-                Center(
-                  child: Image.asset(
-                    'assets/images/BooK.png',
-                    width: isLandscape ? screenWidth * 0.4 : screenWidth * 0.6, // Adjusted image width based on orientation
-                  ),
-                ),
-                SizedBox(height: screenHeight * 0.05), // Adjusted spacing dynamically
+            // Scrollable Content
+            Positioned(
+              top: screenHeight * 0.15,
+              left: 0,
+              right: 0,
+              bottom: 0,
+              child: SingleChildScrollView(
+                child: Column(
+                  children: [
+                    Center(
+                      child: Image.asset(
+                        'assets/images/BooK.png',
+                        width: isLandscape ? screenWidth * 0.4 : screenWidth * 0.6,
+                      ),
+                    ),
+                    SizedBox(height: screenHeight * 0.05),
 
-                // Buttons Grid
-                Expanded(
-                  child: GridView.count(
-                    shrinkWrap: true,  // Prevent unnecessary height expansion
-                    physics: NeverScrollableScrollPhysics(), // Disable scrolling inside GridView
-                    crossAxisCount: isLandscape ? 3 : 2, // More columns in landscape
-                    mainAxisSpacing: screenHeight * 0.02, // Responsive spacing
-                    crossAxisSpacing: screenWidth * 0.05,
-                    padding: EdgeInsets.symmetric(horizontal: screenWidth * 0.05),
-                    children: [
-                      _buildImageButton(image: 'assets/images/Weeks.png', label: "Weeks", screenWidth: screenWidth, screenHeight: screenHeight, onPressed: () {
-                        Navigator.push(context, MaterialPageRoute(builder: (context) => const WordsGame()));
-                      }),
-                      _buildImageButton(image: 'assets/images/Planets.png', label: "Planets", screenWidth: screenWidth, screenHeight: screenHeight, onPressed: () {
-                        Navigator.push(context, MaterialPageRoute(builder: (context) => const WordsGame()));
-                      }),
-                      _buildImageButton(image: 'assets/images/Animals.png', label: "Animals", screenWidth: screenWidth, screenHeight: screenHeight, onPressed: () {
-                        Navigator.push(context, MaterialPageRoute(builder: (context) => const WordsGame()));
-                      }),
-                      _buildImageButton(image: 'assets/images/Fruits.png', label: "Fruits", screenWidth: screenWidth, screenHeight: screenHeight, onPressed: () {
-                        Navigator.push(context, MaterialPageRoute(builder: (context) => const WordsGame()));
-                      }),
-                    ],
-                  ),
+                    // Buttons Grid
+                    GridView.count(
+                      shrinkWrap: true,
+                      physics: const NeverScrollableScrollPhysics(),
+                      crossAxisCount: 2,
+                      mainAxisSpacing: screenHeight * 0.03,
+                      crossAxisSpacing: screenWidth * 0.05,
+                      padding: EdgeInsets.all(screenWidth * 0.05),
+                      children: [
+                        _buildImageButton(
+                          image: 'assets/images/Weeks.png',
+                          label: "Weeks",
+                          screenWidth: screenWidth,
+                          screenHeight: screenHeight,
+                          onPressed: () {
+                            AudioManager().triggerVibration();
+                            AudioManager().playSoundEffect();
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => const WordsGame(),
+                              ),
+                            );
+                          },
+                        ),
+                        _buildImageButton(
+                          image: 'assets/images/Planets.png',
+                          label: "Planets",
+                          screenWidth: screenWidth,
+                          screenHeight: screenHeight,
+                          onPressed: () {
+                            AudioManager().triggerVibration();
+                            AudioManager().playSoundEffect();
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => const WordsGame(),
+                              ),
+                            );
+                          },
+                        ),
+                        _buildImageButton(
+                          image: 'assets/images/Animals.png',
+                          label: "Animals",
+                          screenWidth: screenWidth,
+                          screenHeight: screenHeight,
+                          onPressed: () {
+                            AudioManager().triggerVibration();
+                            AudioManager().playSoundEffect();
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => const WordsGame(),
+                              ),
+                            );
+                          },
+                        ),
+                        _buildImageButton(
+                          image: 'assets/images/Fruits.png',
+                          label: "Fruits",
+                          screenWidth: screenWidth,
+                          screenHeight: screenHeight,
+                          onPressed: () {
+                            AudioManager().triggerVibration();
+                            AudioManager().playSoundEffect();
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => const WordsGame(),
+                              ),
+                            );
+                          },
+                        ),
+                      ],
+                    ),
+                  ],
                 ),
-              ],
+              ),
             ),
           ],
         ),
@@ -110,20 +171,17 @@ class WordsCategory extends StatelessWidget {
 
   Widget _buildGradientCircle({required Widget child}) {
     return Container(
-      width: 40.0, // Adjust button width
-      height: 40.0, // Adjust button height
+      width: 40.0,
+      height: 40.0,
       decoration: BoxDecoration(
         shape: BoxShape.circle,
         gradient: const LinearGradient(
-          colors: [
-            Color(0xFFFF4DC3), // Pink
-            Color(0xFF0066FF), // Blue
-          ],
+          colors: [Color(0xFFFF4DC3), Color(0xFF0066FF)],
           begin: Alignment.topCenter,
           end: Alignment.bottomCenter,
         ),
         border: Border.all(color: Colors.white, width: 1.5),
-        boxShadow: [
+        boxShadow: const [
           BoxShadow(
             color: Color(0xFF4169E1),
             blurRadius: 10.0,
@@ -137,21 +195,18 @@ class WordsCategory extends StatelessWidget {
 
   Widget _buildGradientSquare({required Widget child}) {
     return Container(
-      width: 40.0, // Adjust button width
-      height: 40.0, // Adjust button height
+      width: 40.0,
+      height: 40.0,
       decoration: BoxDecoration(
         shape: BoxShape.rectangle,
         borderRadius: BorderRadius.circular(12.0),
         gradient: const LinearGradient(
-          colors: [
-            Color(0xFFFF4DC3), // Pink
-            Color(0xFF0066FF), // Blue
-          ],
+          colors: [Color(0xFFFF4DC3), Color(0xFF0066FF)],
           begin: Alignment.topCenter,
           end: Alignment.bottomCenter,
         ),
         border: Border.all(color: Colors.white, width: 1.5),
-        boxShadow: [
+        boxShadow: const [
           BoxShadow(
             color: Color(0xFF4169E1),
             blurRadius: 10.0,
@@ -170,6 +225,11 @@ class WordsCategory extends StatelessWidget {
     required double screenWidth,
     required double screenHeight,
   }) {
+    final bool isLandscape = screenWidth > screenHeight;
+    final double buttonSize = isLandscape ? screenWidth * 0.2 : screenWidth * 0.3;
+    final double imageSize = isLandscape ? screenWidth * 0.15 : screenWidth * 0.25;
+    final double fontSize = isLandscape ? screenWidth * 0.04 : screenWidth * 0.05;
+
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
@@ -179,12 +239,16 @@ class WordsCategory extends StatelessWidget {
             alignment: Alignment.center,
             children: [
               Container(
-                width: screenWidth * 0.3, // Responsive width
-                height: screenWidth * 0.3, // Responsive height
+                width: buttonSize,
+                height: buttonSize,
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
-                  gradient: LinearGradient(
-                    colors: [Color(0xFFFF4DC3), Color(0xFF002174), Color(0xFFD9D9D9)],
+                  gradient: const LinearGradient(
+                    colors: [
+                      Color(0xFFFF4DC3),
+                      Color(0xFF002174),
+                      Color(0xFFD9D9D9),
+                    ],
                     begin: Alignment.topLeft,
                     end: Alignment.bottomRight,
                   ),
@@ -193,24 +257,28 @@ class WordsCategory extends StatelessWidget {
               ClipOval(
                 child: Image.asset(
                   image,
-                  width: screenWidth * 0.25,
-                  height: screenWidth * 0.25,
+                  width: imageSize,
+                  height: imageSize,
                   fit: BoxFit.cover,
                 ),
               ),
             ],
           ),
         ),
-        SizedBox(height: screenHeight * 0.01), // Dynamic spacing
-        Flexible(
-          child: Text(
-            label,
-            textAlign: TextAlign.center, // Ensure text wraps properly
-            style: TextStyle(
-              fontFamily: 'CherryBombOne-Regular',
-              fontSize: screenWidth * 0.05, // Adjusted font size
-              color: Colors.black,
-              letterSpacing: 1.5,
+        SizedBox(height: screenHeight * 0.005),
+        SizedBox(
+          width: screenWidth * 0.35,
+          child: FittedBox(
+            fit: BoxFit.scaleDown,
+            child: Text(
+              label,
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                fontFamily: 'CherryBombOne-Regular',
+                fontSize: fontSize,
+                color: Colors.black,
+                letterSpacing: 2.0,
+              ),
             ),
           ),
         ),

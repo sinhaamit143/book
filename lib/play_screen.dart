@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'categories_screen.dart'; // Import the CategoriesScreen file
 import 'menu.dart'; // Import the MenuScreen file
 import 'exit.dart'; // Import the ExitScreen file
+import 'utils/audio_manager.dart'; 
 
 class PlayScreen extends StatelessWidget {
   const PlayScreen({super.key});
@@ -59,6 +60,8 @@ class PlayScreen extends StatelessWidget {
                     size: 22, // Icon size
                   ),
                   onPressed: () {
+                    AudioManager().triggerVibration();
+                    AudioManager().playSoundEffect();
                     Navigator.push(
                       context,
                       MaterialPageRoute(builder: (context) => const MenuScreen()),
@@ -99,6 +102,8 @@ class PlayScreen extends StatelessWidget {
                     ),
                     onPressed: () {
                       // Navigate to CategoriesScreen when Play is clicked
+                      AudioManager().triggerVibration();
+                      AudioManager().playSoundEffect();
                       Navigator.push(
                         context,
                         MaterialPageRoute(
@@ -118,10 +123,10 @@ class PlayScreen extends StatelessWidget {
                           begin: Alignment.topCenter,
                           end: Alignment.bottomCenter,
                         ),
-                        border: Border.all(
-                          color: Color(0xFF002FA7), // Dark blue border color
-                          width: 2.0, // Border width
-                        ),
+                        // border: Border.all(
+                        //   color: Color(0xFF002FA7), // Dark blue border color
+                        //   width: 2.0, // Border width
+                        // ),
                       ),
                       padding: EdgeInsets.symmetric(
                         horizontal: screenWidth * 0.2, // Dynamic width based on screen size
@@ -159,6 +164,8 @@ class PlayScreen extends StatelessWidget {
                     ),
                     onPressed: () {
                       // Navigate to ExitScreen when Exit is clicked
+                      AudioManager().triggerVibration();
+                      AudioManager().playSoundEffect();
                       Navigator.push(
                         context,
                         MaterialPageRoute(
@@ -178,10 +185,10 @@ class PlayScreen extends StatelessWidget {
                           begin: Alignment.topCenter,
                           end: Alignment.bottomCenter,
                         ),
-                        border: Border.all(
-                          color: Color(0xFF002FA7), // Dark blue border color
-                          width: 2.0, // Border width
-                        ),
+                        // border: Border.all(
+                        //   color: Color(0xFF002FA7), // Dark blue border color
+                        //   width: 2.0, // Border width
+                        // ),
                       ),
                       padding: EdgeInsets.symmetric(
                         horizontal: screenWidth * 0.2, // Dynamic width based on screen size

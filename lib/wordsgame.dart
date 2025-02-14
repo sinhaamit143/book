@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'utils/audio_manager.dart';
 
 class WordsGame extends StatelessWidget {
   const WordsGame({super.key});
@@ -19,6 +20,8 @@ class WordsGame extends StatelessWidget {
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
           onPressed: () {
+            AudioManager().triggerVibration();
+            AudioManager().playSoundEffect();
             Navigator.pop(context); // Navigate back
           },
         ),

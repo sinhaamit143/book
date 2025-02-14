@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'utils/audio_manager.dart';
 
 class NumberGame extends StatelessWidget {
   const NumberGame({super.key});
@@ -19,6 +20,8 @@ class NumberGame extends StatelessWidget {
         leading: IconButton(
           icon: const Icon(Icons.arrow_back), // Back button
           onPressed: () {
+            AudioManager().triggerVibration();
+            AudioManager().playSoundEffect();
             Navigator.pop(context); // Navigate back to the previous screen
           },
         ),

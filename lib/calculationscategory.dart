@@ -1,15 +1,16 @@
 import 'package:flutter/material.dart';
-import 'menu.dart'; // Import the menu.dart page
-import 'numbergame.dart'; // Import the numbergame.dart page
+import 'menu.dart';
+import 'numbergame.dart';
+import 'utils/audio_manager.dart';
 
 class CalculationsCategory extends StatelessWidget {
   const CalculationsCategory({super.key});
 
   @override
   Widget build(BuildContext context) {
-    // Get screen dimensions
-    double screenWidth = MediaQuery.of(context).size.width;
-    double screenHeight = MediaQuery.of(context).size.height;
+    final bool isLandscape = MediaQuery.of(context).orientation == Orientation.landscape;
+    final double screenWidth = MediaQuery.of(context).size.width;
+    final double screenHeight = MediaQuery.of(context).size.height;
 
     return Scaffold(
       body: Container(
@@ -25,11 +26,13 @@ class CalculationsCategory extends StatelessWidget {
           children: [
             // Back Button
             Positioned(
-              top: screenHeight * 0.05, // 5% from the top
-              left: screenWidth * 0.07, // 7% from the left
+              top: screenHeight * 0.05,
+              left: screenWidth * 0.07,
               child: _buildGradientCircle(
                 child: IconButton(
                   onPressed: () {
+                    AudioManager().triggerVibration();
+                    AudioManager().playSoundEffect();
                     Navigator.pop(context);
                   },
                   icon: const Icon(
@@ -43,8 +46,8 @@ class CalculationsCategory extends StatelessWidget {
 
             // Menu Button
             Positioned(
-              top: screenHeight * 0.05, // 5% from the top
-              right: screenWidth * 0.07, // 7% from the right
+              top: screenHeight * 0.05,
+              right: screenWidth * 0.07,
               child: _buildGradientSquare(
                 child: IconButton(
                   icon: const Icon(
@@ -53,6 +56,8 @@ class CalculationsCategory extends StatelessWidget {
                     size: 22,
                   ),
                   onPressed: () {
+                    AudioManager().triggerVibration();
+                    AudioManager().playSoundEffect();
                     Navigator.push(
                       context,
                       MaterialPageRoute(builder: (context) => const MenuScreen()),
@@ -62,86 +67,101 @@ class CalculationsCategory extends StatelessWidget {
               ),
             ),
 
-            // Content
-            Column(
-              children: [
-                SizedBox(height: screenHeight * 0.15), // Adjusted spacing dynamically
-                Center(
-                  child: Image.asset(
-                    'assets/images/BooK.png',
-                    width: screenWidth * 0.6, // Adjusted dynamically
-                  ),
-                ),
-                SizedBox(height: screenHeight * 0.05), // Adjusted spacing dynamically
+            // Scrollable Content
+            Positioned(
+              top: screenHeight * 0.15,
+              left: 0,
+              right: 0,
+              bottom: 0,
+              child: SingleChildScrollView(
+                child: Column(
+                  children: [
+                    Center(
+                      child: Image.asset(
+                        'assets/images/BooK.png',
+                        width: isLandscape ? screenWidth * 0.4 : screenWidth * 0.6,
+                      ),
+                    ),
+                    SizedBox(height: screenHeight * 0.05),
 
-                // Buttons Grid
-                Expanded(
-                  child: GridView.count(
-                    crossAxisCount: 2,
-                    mainAxisSpacing: screenHeight * 0.03, // Dynamic spacing
-                    crossAxisSpacing: screenWidth * 0.05, // Dynamic spacing
-                    padding: EdgeInsets.all(screenWidth * 0.05), // Adjusted padding
-                    children: [
-                      _buildImageButton(
-                        image: 'assets/images/Plus.png',
-                        label: "Plus",
-                        screenWidth: screenWidth,
-                        screenHeight: screenHeight,
-                        onPressed: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => const NumberGame(),
-                            ),
-                          );
-                        },
-                      ),
-                      _buildImageButton(
-                        image: 'assets/images/Minus.png',
-                        label: "Minus",
-                        screenWidth: screenWidth,
-                        screenHeight: screenHeight,
-                        onPressed: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => const NumberGame(),
-                            ),
-                          );
-                        },
-                      ),
-                      _buildImageButton(
-                        image: 'assets/images/Multiply.png',
-                        label: "Multiply",
-                        screenWidth: screenWidth,
-                        screenHeight: screenHeight,
-                        onPressed: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => const NumberGame(),
-                            ),
-                          );
-                        },
-                      ),
-                      _buildImageButton(
-                        image: 'assets/images/Divide.png',
-                        label: "Divide",
-                        screenWidth: screenWidth,
-                        screenHeight: screenHeight,
-                        onPressed: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => const NumberGame(),
-                            ),
-                          );
-                        },
-                      ),
-                    ],
-                  ),
+                    // Buttons Grid
+                    GridView.count(
+                      shrinkWrap: true,
+                      physics: const NeverScrollableScrollPhysics(),
+                      crossAxisCount: 2,
+                      mainAxisSpacing: screenHeight * 0.03,
+                      crossAxisSpacing: screenWidth * 0.05,
+                      padding: EdgeInsets.all(screenWidth * 0.05),
+                      children: [
+                        _buildImageButton(
+                          image: 'assets/images/Plus.png',
+                          label: "Plus",
+                          screenWidth: screenWidth,
+                          screenHeight: screenHeight,
+                          onPressed: () {
+                            AudioManager().triggerVibration();
+                            AudioManager().playSoundEffect();
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => const NumberGame(),
+                              ),
+                            );
+                          },
+                        ),
+                        _buildImageButton(
+                          image: 'assets/images/Minus.png',
+                          label: "Minus",
+                          screenWidth: screenWidth,
+                          screenHeight: screenHeight,
+                          onPressed: () {
+                            AudioManager().triggerVibration();
+                            AudioManager().playSoundEffect();
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => const NumberGame(),
+                              ),
+                            );
+                          },
+                        ),
+                        _buildImageButton(
+                          image: 'assets/images/Multiply.png',
+                          label: "Multiply",
+                          screenWidth: screenWidth,
+                          screenHeight: screenHeight,
+                          onPressed: () {
+                            AudioManager().triggerVibration();
+                            AudioManager().playSoundEffect();
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => const NumberGame(),
+                              ),
+                            );
+                          },
+                        ),
+                        _buildImageButton(
+                          image: 'assets/images/Divide.png',
+                          label: "Divide",
+                          screenWidth: screenWidth,
+                          screenHeight: screenHeight,
+                          onPressed: () {
+                            AudioManager().triggerVibration();
+                            AudioManager().playSoundEffect();
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => const NumberGame(),
+                              ),
+                            );
+                          },
+                        ),
+                      ],
+                    ),
+                  ],
                 ),
-              ],
+              ),
             ),
           ],
         ),
@@ -151,8 +171,8 @@ class CalculationsCategory extends StatelessWidget {
 
   Widget _buildGradientCircle({required Widget child}) {
     return Container(
-      width: 40.0, // Adjust button width
-      height: 40.0, // Adjust button height
+      width: 40.0,
+      height: 40.0,
       decoration: BoxDecoration(
         shape: BoxShape.circle,
         gradient: const LinearGradient(
@@ -161,7 +181,7 @@ class CalculationsCategory extends StatelessWidget {
           end: Alignment.bottomCenter,
         ),
         border: Border.all(color: Colors.white, width: 1.5),
-        boxShadow: [
+        boxShadow: const [
           BoxShadow(
             color: Color(0xFF4169E1),
             blurRadius: 10.0,
@@ -175,8 +195,8 @@ class CalculationsCategory extends StatelessWidget {
 
   Widget _buildGradientSquare({required Widget child}) {
     return Container(
-      width: 40.0, // Adjust button width
-      height: 40.0, // Adjust button height
+      width: 40.0,
+      height: 40.0,
       decoration: BoxDecoration(
         shape: BoxShape.rectangle,
         borderRadius: BorderRadius.circular(12.0),
@@ -186,7 +206,7 @@ class CalculationsCategory extends StatelessWidget {
           end: Alignment.bottomCenter,
         ),
         border: Border.all(color: Colors.white, width: 1.5),
-        boxShadow: [
+        boxShadow: const [
           BoxShadow(
             color: Color(0xFF4169E1),
             blurRadius: 10.0,
@@ -205,6 +225,11 @@ class CalculationsCategory extends StatelessWidget {
     required double screenWidth,
     required double screenHeight,
   }) {
+    final bool isLandscape = screenWidth > screenHeight;
+    final double buttonSize = isLandscape ? screenWidth * 0.2 : screenWidth * 0.3;
+    final double imageSize = isLandscape ? screenWidth * 0.15 : screenWidth * 0.25;
+    final double fontSize = isLandscape ? screenWidth * 0.04 : screenWidth * 0.05;
+
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
@@ -214,11 +239,11 @@ class CalculationsCategory extends StatelessWidget {
             alignment: Alignment.center,
             children: [
               Container(
-                width: screenWidth * 0.3,
-                height: screenWidth * 0.3,
+                width: buttonSize,
+                height: buttonSize,
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
-                  gradient: LinearGradient(
+                  gradient: const LinearGradient(
                     colors: [
                       Color(0xFFFF4DC3),
                       Color(0xFF002174),
@@ -232,27 +257,25 @@ class CalculationsCategory extends StatelessWidget {
               ClipOval(
                 child: Image.asset(
                   image,
-                  width: screenWidth * 0.25,
-                  height: screenWidth * 0.25,
+                  width: imageSize,
+                  height: imageSize,
                   fit: BoxFit.cover,
                 ),
               ),
             ],
           ),
         ),
-        SizedBox(height: screenHeight * 0.005), // Reduced spacing dynamically
-
-        // Use SizedBox instead of Container
+        SizedBox(height: screenHeight * 0.005),
         SizedBox(
-          width: screenWidth * 0.35, // Ensuring proper width to avoid overflow
+          width: screenWidth * 0.35,
           child: FittedBox(
-            fit: BoxFit.scaleDown, // Prevents text from overflowing
+            fit: BoxFit.scaleDown,
             child: Text(
               label,
               textAlign: TextAlign.center,
               style: TextStyle(
                 fontFamily: 'CherryBombOne-Regular',
-                fontSize: screenWidth * 0.05, // Reduced for better scaling
+                fontSize: fontSize,
                 color: Colors.black,
                 letterSpacing: 2.0,
               ),

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'menu.dart';
+import 'utils/audio_manager.dart';
 
 class ColorsGame extends StatefulWidget {
   const ColorsGame({super.key});
@@ -44,6 +45,8 @@ class LoadingScreenState extends State<ColorsGame> {
             child: _buildGradientCircle(
               child: IconButton(
                 onPressed: () {
+                  AudioManager().triggerVibration();
+                  AudioManager().playSoundEffect();
                   Navigator.pop(context);
                 },
                 icon: const Icon(
@@ -67,6 +70,8 @@ class LoadingScreenState extends State<ColorsGame> {
                   size: 22,
                 ),
                 onPressed: () {
+                  AudioManager().triggerVibration();
+                  AudioManager().playSoundEffect();
                   Navigator.push(
                     context,
                     MaterialPageRoute(builder: (context) => const MenuScreen()),

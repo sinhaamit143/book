@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:book/exit.dart';
-import 'package:book/utils/audio_manager.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+import 'package:book/utils/audio_manager.dart'; // Import AudioManager
+import 'package:book/support.dart';
+import 'package:book/inviteFriend.dart';
 
 class MenuScreen extends StatefulWidget {
   const MenuScreen({super.key});
@@ -10,76 +11,39 @@ class MenuScreen extends StatefulWidget {
   _MenuScreenState createState() => _MenuScreenState();
 }
 
-class _MenuScreenState extends State<MenuScreen> with WidgetsBindingObserver {
-  bool isMusicPlaying = true;
-  bool wasMusicPlayingBeforeBackground =
-      true; // Track music state before backgrounding
-
+class _MenuScreenState extends State<MenuScreen> {
   @override
   void initState() {
     super.initState();
-    WidgetsBinding.instance.addObserver(this); // Observe app lifecycle
-    _resetMusicOnStartup();
+    _loadInitialStates(); // Load initial music and sound states
   }
 
-  @override
-  void dispose() {
-    WidgetsBinding.instance
-        .removeObserver(this); // Remove observer when screen is disposed
-    super.dispose();
-  }
-
-  // ✅ Handle app lifecycle changes
-  @override
-  void didChangeAppLifecycleState(AppLifecycleState state) {
-    if (state == AppLifecycleState.paused) {
-      // App is in the background → Stop music if it was playing
-      if (isMusicPlaying) {
-        wasMusicPlayingBeforeBackground =
-            true; // Remember that music was playing
-        AudioManager().stopMusic();
-      } else {
-        wasMusicPlayingBeforeBackground = false;
-      }
-    } else if (state == AppLifecycleState.resumed) {
-      // App comes back to foreground → Resume music if it was playing before
-      if (wasMusicPlayingBeforeBackground) {
-        AudioManager().playBackgroundMusic();
-      }
-    }
-  }
-
-  // ✅ Ensure music always starts playing when reopening the app
-  Future<void> _resetMusicOnStartup() async {
+  // ✅ Load initial music, sound, and vibration states
+  Future<void> _loadInitialStates() async {
     setState(() {
-      isMusicPlaying = true; // Always start with music ON
+      // No need to manually load states; AudioManager handles it
     });
-
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.setBool('isMusicPlaying', true);
-
-    AudioManager().playBackgroundMusic();
-  }
-
-  // ✅ Save music state to SharedPreferences
-  Future<void> _saveMusicState(bool state) async {
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.setBool('isMusicPlaying', state);
   }
 
   // ✅ Toggle music
   void _toggleMusic() {
-    setState(() {
-      isMusicPlaying = !isMusicPlaying;
-    });
+    bool isMusicEnabled = AudioManager().isMusicEnabled();
+    AudioManager().toggleMusic(!isMusicEnabled);
+    setState(() {});
+  }
 
-    _saveMusicState(isMusicPlaying);
+  // ✅ Toggle sound
+  void _toggleSound() {
+    bool isSoundEnabled = AudioManager().isSoundEnabled();
+    AudioManager().toggleSound(!isSoundEnabled);
+    setState(() {});
+  }
 
-    if (isMusicPlaying) {
-      AudioManager().playBackgroundMusic();
-    } else {
-      AudioManager().stopMusic();
-    }
+  // ✅ Toggle vibration
+  void _toggleVibration() {
+    bool isVibrationEnabled = AudioManager().isVibrationEnabled();
+    AudioManager().toggleVibration(!isVibrationEnabled);
+    setState(() {});
   }
 
   @override
@@ -122,32 +86,72 @@ class _MenuScreenState extends State<MenuScreen> with WidgetsBindingObserver {
                         crossAxisSpacing: screenWidth * 0.05,
                         children: [
                           _buildImageButton(
-                              imagePath: 'assets/images/Vibration.png',
-                              label: "Vibration",
-                              onPressed: () {}),
+                            imagePath: AudioManager().isVibrationEnabled()
+                                ? 'assets/images/Vibration.png'
+                                : 'assets/images/VCross.png',
+                            label: "Vibration",
+                            onPressed: () {
+                              AudioManager().triggerVibration(); // Trigger vibration
+                              _toggleVibration();
+                              AudioManager()
+                                  .playSoundEffect(); // Play sound effect
+                            },
+                          ),
                           _buildImageButton(
-                            imagePath: isMusicPlaying
+                            imagePath: AudioManager().isMusicEnabled()
                                 ? 'assets/images/Music.png'
                                 : 'assets/images/MCross.png',
                             label: "Music",
-                            onPressed: _toggleMusic,
+                            onPressed: () {
+                              AudioManager().triggerVibration(); // Trigger vibration
+                              _toggleMusic();
+                              AudioManager()
+                                  .playSoundEffect(); // Play sound effect
+                            },
                           ),
                           _buildImageButton(
-                              imagePath: 'assets/images/Sound.png',
-                              label: "Sound",
-                              onPressed: () {}),
+                            imagePath: AudioManager().isSoundEnabled()
+                                ? 'assets/images/Sound.png'
+                                : 'assets/images/SCross.png',
+                            label: "Sound",
+                            onPressed: () {
+                              AudioManager().triggerVibration(); // Trigger vibration
+                              _toggleSound();
+                              AudioManager()
+                                  .playSoundEffect(); // Play sound effect
+                            },
+                          ),
                           _buildImageButton(
                               imagePath: 'assets/images/Support.png',
                               label: "Support",
-                              onPressed: () {}),
+                              onPressed: () {
+                                AudioManager().triggerVibration(); // Trigger vibration
+                                AudioManager()
+                                    .playSoundEffect(); // Play sound effect
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) => const Support()));
+                              }),
                           _buildImageButton(
                               imagePath: 'assets/images/InviteFriends.png',
                               label: "Invite Friend",
-                              onPressed: () {}),
+                              onPressed: () {
+                                AudioManager().triggerVibration(); // Trigger vibration
+                                AudioManager()
+                                    .playSoundEffect(); // Play sound effect
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) => const InviteFriend()));
+                              }),
                           _buildImageButton(
                             imagePath: 'assets/images/Exit.png',
                             label: "Exit",
                             onPressed: () {
+                              AudioManager().triggerVibration(); // Trigger vibration
+                              AudioManager()
+                                  .playSoundEffect(); // Play sound effect
                               Navigator.push(
                                   context,
                                   MaterialPageRoute(
@@ -182,9 +186,8 @@ class _MenuScreenState extends State<MenuScreen> with WidgetsBindingObserver {
                           shape: BoxShape.circle,
                           gradient: const LinearGradient(
                             colors: [
-                              Color(0x80FF4DC3),
-                              Color(0xFF002174),
-                              Color(0xFFD9D9D9),
+                              Color(0xFFFF4DC3), // Pink
+                              Color(0xFF0066FF), // Blue
                             ],
                             begin: Alignment.topCenter,
                             end: Alignment.bottomCenter,
@@ -192,6 +195,9 @@ class _MenuScreenState extends State<MenuScreen> with WidgetsBindingObserver {
                         ),
                         child: IconButton(
                           onPressed: () {
+                            AudioManager().triggerVibration(); // Trigger vibration
+                            AudioManager()
+                                .playSoundEffect(); // Play sound effect
                             Navigator.pop(context);
                           },
                           icon: const Icon(

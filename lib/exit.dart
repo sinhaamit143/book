@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'utils/audio_manager.dart';
 
 class ExitPage extends StatelessWidget {
   const ExitPage({super.key});
@@ -100,6 +101,8 @@ class ExitPage extends StatelessWidget {
                             // Play On Button
                             ElevatedButton(
                               onPressed: () {
+                                AudioManager().triggerVibration();
+                                AudioManager().playSoundEffect();
                                 Navigator.pop(context); // Go back to the previous screen
                               },
                               style: ElevatedButton.styleFrom(
@@ -137,6 +140,8 @@ class ExitPage extends StatelessWidget {
                             // End Game Button
                             ElevatedButton(
                               onPressed: () {
+                                AudioManager().triggerVibration();
+                                AudioManager().playSoundEffect();
                                 SystemNavigator.pop(); // Close the application
                               },
                               style: ElevatedButton.styleFrom(
